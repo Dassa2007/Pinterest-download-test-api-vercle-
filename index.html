@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pinterest Video Downloader</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-900 text-white min-h-screen flex flex-col items-center justify-center p-4">
+
+    <div class="w-full max-w-md bg-slate-800 p-6 rounded-2xl shadow-xl border border-slate-700">
+        <h1 class="text-2xl font-bold text-center mb-2 text-red-500">Pinterest Downloader</h1>
+        <p class="text-slate-400 text-sm text-center mb-6">Paste your Pinterest link below to download videos directly.</p>
+
+        <div class="space-y-4">
+            <input type="text" id="pinUrl" placeholder="Paste Pinterest link here..." 
+                class="w-full px-4 py-3 bg-slate-900 border border-slate-700 rounded-xl focus:outline-none focus:border-red-500 text-sm">
+            
+            <button onclick="downloadVideo()" id="downloadBtn"
+                class="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-3 rounded-xl transition duration-200 flex items-center justify-center space-x-2">
+                <span>Download Video</span>
+            </button>
+        </div>
+
+        <div id="loading" class="hidden mt-6 text-center">
+            <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-red-500 border-t-transparent"></div>
+            <p class="text-slate-400 text-sm mt-2">Fetching video...</p>
+        </div>
+
+        <div id="result" class="hidden mt-6 p-4 bg-slate-900 rounded-xl border border-slate-700 text-center">
+            <p class="text-green-400 text-sm font-semibold mb-3">Video Ready!</p>
+            <a id="downloadLink" href="#" target="_blank" 
+                class="inline-block bg-green-600 hover:bg-green-700 text-white text-sm font-semibold px-6 py-2.5 rounded-lg transition duration-200">
+                Click Here to Save
+            </a>
+        </div>
+    </div>
+
+    <script>
+        async function downloadVideo() {
+            const urlInput = document.getElementById('pinUrl').value.trim();
+            const loading = document.getElementById('loading');
+            const result = document.getElementById('result');
+            const downloadLink = document.getElementById('downloadLink');
+            const downloadBtn = document.getElementById('downloadBtn');
+
+            if (!urlInput) {
+                alert("Please enter a valid Pinterest URL!");
+                return;
+            }
+
+            // UI Reset & Loading State
+            loading.classList.remove('hidden');
+            result.classList.add('hidden');
+            downloadBtn.disabled = true;
+
+            try {
+                // Your deployed API URL
+                const apiUrl = `https://pinterest-downloader-api-vercle.vercel.app/download?url=${encodeURIComponent(urlInput)}`;
+                
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+
+                if (data.success && data.download_url) {
+                    downloadLink.href = data.download_url;
+                    result.classList.remove('hidden');
+                } else {
+                    alert(data.error || "Could not fetch the video. Check the link and try again.");
+                }
+            } catch (error) {
+                console.error(error);
+                alert("Something went wrong! Please check your network connection.");
+            } finally {
+                loading.classList.add('hidden');
+                downloadBtn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>
