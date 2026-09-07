@@ -60,7 +60,8 @@
             downloadBtn.disabled = true;
 
             try {
-                const apiUrl = `https://pinterest-download-test-api-vercle.vercel.app/download?url=${encodeURIComponent(urlInput)}`;
+                // ඔබගේ අලුත් Backend API ලින්ක් එක මෙහි ඇතුළත් කර ඇත
+                const apiUrl = `https://pinterest-api-backend-lilac.vercel.app/download?url=${encodeURIComponent(urlInput)}`;
                 
                 const response = await fetch(apiUrl, {
                     method: 'GET',
@@ -75,7 +76,6 @@
                     downloadLink.href = data.download_url;
                     result.classList.remove('hidden');
                 } else {
-                    // Object එකක් ලෙස එන දෝෂ නිවැරදිව පෙන්වීම සඳහා string එකට හැරවීම
                     let errorMsg = data.error || "Could not fetch the video. Check the link and try again.";
                     if (typeof errorMsg === 'object') {
                         errorMsg = JSON.stringify(errorMsg);
