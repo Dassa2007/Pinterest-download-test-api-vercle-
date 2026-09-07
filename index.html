@@ -60,7 +60,6 @@
             downloadBtn.disabled = true;
 
             try {
-                // ඔබේ සැබෑ Vercel API ලින්ක් එක
                 const apiUrl = `https://pinterest-download-test-api-vercle.vercel.app/download?url=${encodeURIComponent(urlInput)}`;
                 
                 const response = await fetch(apiUrl, {
@@ -76,7 +75,12 @@
                     downloadLink.href = data.download_url;
                     result.classList.remove('hidden');
                 } else {
-                    alert(data.error || "Could not fetch the video. Check the link and try again.");
+                    // Object එකක් ලෙස එන දෝෂ නිවැරදිව පෙන්වීම සඳහා string එකට හැරවීම
+                    let errorMsg = data.error || "Could not fetch the video. Check the link and try again.";
+                    if (typeof errorMsg === 'object') {
+                        errorMsg = JSON.stringify(errorMsg);
+                    }
+                    alert(errorMsg);
                 }
             } catch (error) {
                 console.error(error);
